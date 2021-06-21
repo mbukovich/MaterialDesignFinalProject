@@ -65,13 +65,13 @@ public class ArticleDetailActivity extends AppCompatActivity //ActionBarActivity
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-                mUpButton.animate()
-                        .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
-                        .setDuration(300);
-            }
+            // @Override
+            // public void onPageScrollStateChanged(int state) {
+            //     super.onPageScrollStateChanged(state);
+            //     mUpButton.animate()
+            //             .alpha((state == ViewPager.SCROLL_STATE_IDLE) ? 1f : 0f)
+            //             .setDuration(300);
+            // }
 
             @Override
             public void onPageSelected(int position) {
@@ -93,18 +93,18 @@ public class ArticleDetailActivity extends AppCompatActivity //ActionBarActivity
             }
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mUpButtonContainer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-                @Override
-                public WindowInsets onApplyWindowInsets(View view, WindowInsets windowInsets) {
-                    view.onApplyWindowInsets(windowInsets);
-                    mTopInset = windowInsets.getSystemWindowInsetTop();
-                    mUpButtonContainer.setTranslationY(mTopInset);
-                    updateUpButtonPosition();
-                    return windowInsets;
-                }
-            });
-        }
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        // mUpButtonContainer.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+        //         @Override
+        //         public WindowInsets onApplyWindowInsets(View view, WindowInsets windowInsets) {
+        //             view.onApplyWindowInsets(windowInsets);
+        //             mTopInset = windowInsets.getSystemWindowInsetTop();
+        //             mUpButtonContainer.setTranslationY(mTopInset);
+        //             updateUpButtonPosition();
+        //             return windowInsets;
+        //         }
+        //     });
+        // }
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
@@ -155,7 +155,7 @@ public class ArticleDetailActivity extends AppCompatActivity //ActionBarActivity
 
     private void updateUpButtonPosition() {
         int upButtonNormalBottom = mTopInset + mUpButton.getHeight();
-        mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
+        // mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
     }
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {

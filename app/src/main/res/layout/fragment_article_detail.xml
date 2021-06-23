@@ -4,7 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.xyzreader.ui.ObservableScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/article_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay" />
+
+    <!--<com.example.xyzreader.ui.ObservableScrollView
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -19,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/photo_placeholder">
-                <!--suppress AndroidLintContentDescription -->
+                &lt;!&ndash;suppress AndroidLintContentDescription &ndash;&gt;
                 <ImageView
                     android:id="@+id/photo"
                     android:layout_width="match_parent"
@@ -91,7 +97,7 @@
 
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
         </LinearLayout>
-    </com.example.xyzreader.ui.ObservableScrollView>
+    </com.example.xyzreader.ui.ObservableScrollView>-->
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/share_fab"
         android:background="@drawable/add_fab_background"

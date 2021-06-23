@@ -18,11 +18,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import android.os.Bundle;
 import androidx.core.app.ShareCompat;
 // import android.support.v7.graphics.Palette;
 import androidx.palette.graphics.Palette;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -64,6 +68,9 @@ public class ArticleDetailFragment extends Fragment implements
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
+
+    private RecyclerView mRecyclerView;
+    private ArticleRecyclerViewAdapter mAdapter;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -128,8 +135,8 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        mScrollView = (ObservableScrollView) mRootView.findViewById(R.id.scrollview);
-        mScrollView.setCallbacks(new ObservableScrollView.Callbacks() {
+        //mScrollView = (ObservableScrollView) mRootView.findViewById(R.id.scrollview);
+        /*mScrollView.setCallbacks(new ObservableScrollView.Callbacks() {
             @Override
             public void onScrollChanged() {
                 mScrollY = mScrollView.getScrollY();
@@ -137,10 +144,10 @@ public class ArticleDetailFragment extends Fragment implements
                 mPhotoContainerView.setTranslationY((int) (mScrollY - mScrollY / PARALLAX_FACTOR));
                 updateStatusBar();
             }
-        });
+        });*/
 
-        mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
-        mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
+        /*mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
+        mPhotoContainerView = mRootView.findViewById(R.id.photo_container);*/
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
@@ -153,6 +160,13 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
+
+        // setup recycler view
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.article_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mRootView.getContext(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new ArticleRecyclerViewAdapter();
+        mRecyclerView.setAdapter(mAdapter);
 
         bindViews();
         updateStatusBar();
@@ -204,18 +218,31 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
+        /*TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);*/
 
+
+
+        // We will pass a list containing the necessary information to populate the recycler view
+        // Some things may be best to do when creating and inflating the views in the viewholder constructors
+
+        // Primarily, the Adapter will need to know how many items to handle
+        // Since it is a nested class in this scenario, it has access to all the data
+
+        // mCursor.getString(ArticleLoader.Query.TITLE) will get the title
+        // Date publishedDate = parsePublishedDate() will get the published date plus logic structure after it
 
         // bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         if (mCursor != null) {
+            mAdapter.setData();
+
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
+            /*
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
             Date publishedDate = parsePublishedDate();
             if (!publishedDate.before(START_OF_EPOCH.getTime())) {
@@ -236,32 +263,37 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
+            // this is where the text body is received and passed to the text view.
+            // How do we separate this into a list of separate strings representing paragraphs?
+            // The starter code seems to separate things based on \r\n|\n
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
-            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
-                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                            Bitmap bitmap = imageContainer.getBitmap();
-                            if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-                                mMutedColor = p.getDarkMutedColor(0xFF333333);
-                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-                                mRootView.findViewById(R.id.meta_bar)
-                                        .setBackgroundColor(mMutedColor);
-                                updateStatusBar();
-                            }
-                        }
-
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-
-                        }
-                    });
+*/
+//            // this is where the article image is received and passed to the image view
+//            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
+//                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+//                        @Override
+//                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+//                            Bitmap bitmap = imageContainer.getBitmap();
+//                            if (bitmap != null) {
+//                                Palette p = Palette.generate(bitmap, 12);
+//                                mMutedColor = p.getDarkMutedColor(0xFF333333);
+//                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
+//                                mRootView.findViewById(R.id.meta_bar)
+//                                        .setBackgroundColor(mMutedColor);
+//                                updateStatusBar();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onErrorResponse(VolleyError volleyError) {
+//
+//                        }
+//                    });
         } else {
             mRootView.setVisibility(View.GONE);
-            titleView.setText("N/A");
-            bylineView.setText("N/A" );
-            bodyView.setText("N/A");
+            //titleView.setText("N/A");
+            //bylineView.setText("N/A" );
+            //bodyView.setText("N/A");
         }
     }
 
@@ -304,5 +336,136 @@ public class ArticleDetailFragment extends Fragment implements
         return mIsCard
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
+    }
+
+    public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        private String[] mBodyText;
+        private final int IMAGE_TYPE = 0;
+        private final int TITLE_TYPE = 1;
+        private final int TEXT_TYPE = 2;
+
+        public void setData() {
+            mBodyText = mCursor.getString(ArticleLoader.Query.BODY).split("(\r\n\r\n)");
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position > 1) return TEXT_TYPE;
+            if (position > 0) return TITLE_TYPE;
+            return IMAGE_TYPE;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            if (viewType == IMAGE_TYPE) {
+                View view = layoutInflater.inflate(R.layout.article_image_item, parent, false);
+                return new ArticleImageViewHolder(view);
+            }
+            if (viewType == TITLE_TYPE) {
+                View view = layoutInflater.inflate(R.layout.article_title_item, parent, false);
+                return new ArticleTitleViewHolder(view);
+            }
+            View view = layoutInflater.inflate(R.layout.article_text_item, parent, false);
+            return new ArticleTextViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            if (position == 0) {
+                // bind the image viewholder with data
+                final ArticleImageViewHolder viewHolder = (ArticleImageViewHolder) holder;
+                ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
+                        .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+                            @Override
+                            public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                                Bitmap bitmap = imageContainer.getBitmap();
+                                if (bitmap != null) {
+                                    viewHolder.mImageView.setImageBitmap(imageContainer.getBitmap());
+                                }
+                            }
+
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+
+                            }
+                        });
+            }
+            else if (position == 1) {
+                ArticleTitleViewHolder viewHolder = (ArticleTitleViewHolder) holder;
+                viewHolder.mArticleTitle.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+                Date publishedDate = parsePublishedDate();
+                if (!publishedDate.before(START_OF_EPOCH.getTime())) {
+                    viewHolder.mArticleByline.setText(Html.fromHtml(
+                            DateUtils.getRelativeTimeSpanString(
+                                    publishedDate.getTime(),
+                                    System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                                    DateUtils.FORMAT_ABBREV_ALL).toString()
+                                    + " by <font color='#ffffff'>"
+                                    + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                                    + "</font>"));
+
+                } else {
+                    // If date is before 1902, just show the string
+                    viewHolder.mArticleByline.setText(Html.fromHtml(
+                            outputFormat.format(publishedDate) + " by <font color='#ffffff'>"
+                                    + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                                    + "</font>"));
+
+                }
+            }
+            else {
+                // bind the text viewholder with data
+                ArticleTextViewHolder viewHolder = (ArticleTextViewHolder) holder;
+                String text = mBodyText[position - 2];
+                text = text.replaceAll("\r\n|\n", " ");
+                text += "\n";
+                viewHolder.mArticleBody.setText(text);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            if (mBodyText.length > 0) {
+                return mBodyText.length + 2;
+            }
+            return 0;
+        }
+
+        public class ArticleImageViewHolder extends RecyclerView.ViewHolder {
+            public ImageView mImageView;
+            public View mImageContainer;
+
+            public ArticleImageViewHolder(@NonNull View itemView) {
+                super(itemView);
+                mImageView = (ImageView) itemView.findViewById(R.id.photo);
+                mImageContainer = itemView.findViewById(R.id.photo_container);
+            }
+        }
+
+        public class ArticleTitleViewHolder extends RecyclerView.ViewHolder {
+            public View mMetaBar;
+            public TextView mArticleTitle;
+            public TextView mArticleByline;
+
+            public ArticleTitleViewHolder(@NonNull View itemView) {
+                super(itemView);
+                mMetaBar = itemView.findViewById(R.id.meta_bar);
+                mArticleTitle = itemView.findViewById(R.id.article_title);
+                mArticleByline = itemView.findViewById(R.id.article_byline);
+            }
+        }
+
+        public class ArticleTextViewHolder extends RecyclerView.ViewHolder {
+            public TextView mArticleBody;
+
+            public ArticleTextViewHolder(@NonNull View itemView) {
+                super(itemView);
+                mArticleBody = itemView.findViewById(R.id.article_body);
+            }
+        }
     }
 }
